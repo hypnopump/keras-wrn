@@ -6,24 +6,30 @@ from keras.layers import  Conv2D, MaxPooling2D, AveragePooling2D, Flatten
 
 
 def first_block(x):
-	x = Conv2D(16, (3,3))(x)
+	x = Conv2D(16, (3,3), padding="same")(x)
 	x = BatchNormalization()(x)
 	x = Activation('relu')(x)
 	return x
 
-def normal_block(x, n_block):
+def normal_block(x, k, n_block):
+	# Main branch - if 0, strides=1, else=2	
+	if n_block==0:
+		x_res = Conv2D(16*k*(2**n_block), (3,3), padding="same")(x)
+	else:
+		x_res = Conv2D(16*k*(2**n_block), (3,3), strides=(2,2), padding="same")(x)
+	x_res = BatchNormalization()(x_res)
+	x_res = Activation('relu')(x_res)
+	x_res = Conv2D(16*k*(2**n_block), (3,3), padding="same")(x_res)
 	# Alternative branch
-	x = Conv2D(32*(2**n_block), (1,1))
-	# Main branch
-	x_res = Conv2D(32, (3,3))(x)
-	x_res = BatchNormalization()(x)
-	x_res = Activation('relu')(x)
-	x_res = Conv2D(32*(2**n_block), (3,3))(x)
+	if n_block==0:
+		x = Conv2D(16*k*(2**n_block), (1,1))(x)
+	else:
+		x = Conv2D(16*k*(2**n_block), (1,1), strides=(2,2))(x)
 	# Merge Branches
 	x = Add()([x_res, x])
 	return x
 
-def residual_block(x, n_block):
+def residual_block(x, k, n_block):
 	""" Applies 2x:
 			- BatchNorm
 			- Relu
@@ -31,15 +37,15 @@ def residual_block(x, n_block):
 	"""
 	x = BatchNormalization()(x)
 	x = Activation('relu')(x)
-	x = Conv2D(32*(2**n_block), (3,3))
+	x = Conv2D(16*k*(2**n_block), (3,3), padding="same")(x)
 
 	x = BatchNormalization()(x)
 	x = Activation('relu')(x)
-	x = Conv2D(32*(2**n_block), (3,3))
+	x = Conv2D(16*k*(2**n_block), (3,3), padding="same")(x)
 
 	return x
 
-def build_model(n, k, input_dims):
+def build_model(n, k, input_dims, output_dim):
 	""" Builds the model. Params:
 			- n: number of layers. WRNs are of the form WRN-N-K
 				 It must satisfy that (N-4)%6 = 0
@@ -47,30 +53,32 @@ def build_model(n, k, input_dims):
 				 It must satisfy that K%2 = 0
 			- input_dims: input dimensions for the model
 	"""
-
+	# Ensure n & k are correct
+	assert (n-4)%6 == 0
+	assert n%2 == 0
 	# This returns a tensor input to the model
 	inputs = Input(shape=(input_dims))
 
 	# Head of the model
-	x = first_block(x)
+	x = first_block(inputs)
 
 	# Rest of Blocks (normal-residual)
-	for i in n_blocks:
-		x = normal_block(x, i)
-		x_res = residual_block(x, i)
+	for i in range((n-4)//6+1):
+		x = normal_block(x, k, i)
+		x_res = residual_block(x, k, i)
 		x = Add()([x, x_res])
 		# Inter block part
 		x = BatchNormalization()(x)
-		x = Activation('relu')
+		x = Activation('relu')(x)
 
-	x = AveragePooling2D((8,8))
+	x = AveragePooling2D((8,8))(x)
 	x = Flatten()(x)
-	outputs = Dense(128)(x)
+	outputs = Dense(output_dim)(x)
 
 	model = Model(inputs=inputs, outputs=outputs)
 	return model
 
 
 if __name__ == "__main__":
-	model = build_model(1, (32,32,3))
+	model = build_model(16, 10, (32,32,3), 10)
 	model.summary()
