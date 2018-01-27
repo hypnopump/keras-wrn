@@ -42,3 +42,5 @@ By participating in this project, you agree to abide by the thoughtbot [code of 
 * **Author's GitHub Profile**: [Eric Alcaide](https://github.com/EricAlcaide/)
 * **Twitter**: [@eric_alcaide](https://twitter.com/eric_alcaide)
 * **Email**: ericalcaide1@gmail.com
+
+[build-image]: https://img.shields.io/travis/rust-lang/rust/master.svg "Build Status"
