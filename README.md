@@ -1,7 +1,7 @@
 # Wide Residual Networks in Keras
-A package of Wide Residual Networks for image recognition in Keras.
-
 ![Build Status][build-image]
+
+A package of Wide Residual Networks for image recognition in Keras.
 
 **keras-wrn** is **the** Keras package for Wide Residual Networks. It's fast *and* flexible.
 
