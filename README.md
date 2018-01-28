@@ -22,7 +22,7 @@ model.compile("adam", "categorical_crossentropy", ["accuracy"])
 
 (x_train, y_train), (_, _) = keras.datasets.cifar10.load_data()
 
-y_train = keras.utils.np_utils.to_categorical(training_y)
+y_train = keras.utils.np_utils.to_categorical(y_train)
 
 model.fit(x_train, y_train, epochs=10)
 ```
