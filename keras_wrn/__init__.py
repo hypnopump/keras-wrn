@@ -1,1 +1,1 @@
-from wrn import *
+from .wrn import *

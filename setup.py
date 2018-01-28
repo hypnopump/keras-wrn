@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='keras-wrn',
-      version='0.1',
+      version='0.2',
       description='The Keras package for Wide Residual Networks',
       url='https://github.com/EricAlcaide/keras-wrn',
       author='Eric Alcaide',
