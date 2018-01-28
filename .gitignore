@@ -2,11 +2,6 @@
 *.pyc
 *.pypirc
 
-# Unnecessary examples
-.ipynb_checkpoints
-proving_imports.ipynb
-first_test.ipynb
-
 # Setuptools distribution folder.
 /dist/
 
