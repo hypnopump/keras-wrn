@@ -3,9 +3,9 @@
 *.pypirc
 
 # Unnecessary examples
-/examples/.ipynb_checkpoints
-/examples/proving_imports.ipynb
-/examples/first_test.ipynb
+.ipynb_checkpoints
+proving_imports.ipynb
+first_test.ipynb
 
 # Setuptools distribution folder.
 /dist/
