@@ -22,7 +22,7 @@ def main_block(x, filters, n, strides, dropout):
 		x_res = Activation('relu')(x_res)
 		x_res = Conv2D(filters, (3,3), padding="same")(x_res)
 		# Apply dropout if given
-		if dropout: x_res = Dropout(dropout)(x)
+		if dropout: x_res = Dropout(dropout)(x_res)
 		# Second part
 		x_res = BatchNormalization()(x_res)
 		x_res = Activation('relu')(x_res)
